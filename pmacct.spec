@@ -129,7 +129,8 @@ install %{SOURCE2} %{SOURCE4} %{SOURCE6} %{SOURCE8} %{buildroot}/%{_sysconfdir}/
 %attr(600,root,root) %config(noreplace) %{_sysconfdir}/pmacct/nfacctd.conf
 %attr(600,root,root) %config(noreplace) %{_sysconfdir}/pmacct/pmacctd.conf
 
-%changelog* Sun Dec 13 2015 Arun Babu Neelicattu <arun.neelicattu@gmail.com> - 1.5.2-1
+%changelog
+* Sun Dec 13 2015 Arun Babu Neelicattu <arun.neelicattu@gmail.com> - 1.5.2-1
 - Initial packaging based on OpenSUSE rpms packaged by Peter Nixon and available
   at http://download.opensuse.org/repositories/server:/monitoring/
 
