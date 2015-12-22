@@ -2,7 +2,7 @@
 
 Name:               pmacct
 Version:            1.5.2
-Release:            1
+Release:            2
 Summary:            Accounting and aggregation toolsuite for IPv4 and IPv6
 License:            GPLv2+
 Group:              Applications/Engineering
@@ -68,7 +68,8 @@ export CFLAGS="%{optflags} -Wno-return-type"
     --enable-geoip \
     --enable-jansson \
     --enable-64bit \
-    --enable-threads
+    --enable-threads \
+    --enable-ulog
 
 make %{?_smp_mflags}
 
@@ -130,7 +131,9 @@ install %{SOURCE2} %{SOURCE4} %{SOURCE6} %{SOURCE8} %{buildroot}/%{_sysconfdir}/
 %attr(600,root,root) %config(noreplace) %{_sysconfdir}/pmacct/pmacctd.conf
 
 %changelog
+* Mon Dec 21 2015 Arun Babu Neelicattu <arun.neelicattu@gmail.com> - 1.5.2-2
+- Enable ULOG
+
 * Sun Dec 13 2015 Arun Babu Neelicattu <arun.neelicattu@gmail.com> - 1.5.2-1
 - Initial packaging based on OpenSUSE rpms packaged by Peter Nixon and available
   at http://download.opensuse.org/repositories/server:/monitoring/
-
