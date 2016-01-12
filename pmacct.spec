@@ -30,6 +30,8 @@ BuildRequires:      sqlite-devel >= 3.0.0
 BuildRequires:      pkgconfig(geoip)
 BuildRequires:      pkgconfig(jansson)
 BuildRequires:      systemd
+BuildRequires:      librabbitmq
+BuildRequires:      librabbitmq-devel
 
 Requires(post):     systemd
 Requires(preun):    systemd
@@ -69,7 +71,9 @@ export CFLAGS="%{optflags} -Wno-return-type"
     --enable-jansson \
     --enable-64bit \
     --enable-threads \
-    --enable-ulog
+    --enable-ulog \
+    --enable-rabbitmq
+
 
 make %{?_smp_mflags}
 
