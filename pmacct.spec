@@ -2,7 +2,7 @@
 
 Name:               pmacct
 Version:            1.5.2
-Release:            2
+Release:            3
 Summary:            Accounting and aggregation toolsuite for IPv4 and IPv6
 License:            GPLv2+
 Group:              Applications/Engineering
@@ -135,6 +135,9 @@ install %{SOURCE2} %{SOURCE4} %{SOURCE6} %{SOURCE8} %{buildroot}/%{_sysconfdir}/
 %attr(600,root,root) %config(noreplace) %{_sysconfdir}/pmacct/pmacctd.conf
 
 %changelog
+* Wed Jan 13 2016 Betsy Alpert <ealpert@iix.net> - 1.5.2-3
+- Added build support for AMQP/RabbitMQ
+
 * Mon Dec 21 2015 Arun Babu Neelicattu <arun.neelicattu@gmail.com> - 1.5.2-2
 - Enable ULOG
 
