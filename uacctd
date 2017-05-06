@@ -1,4 +1,0 @@
-# /etc/sysconfig/pmacct/uacctd
-
-# Additional options to be passed when starting the daemon
-OPTIONS=

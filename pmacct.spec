@@ -1,42 +1,26 @@
 %global _hardened_build 1
 
 Name:               pmacct
-Version:            1.5.2
-Release:            3
+Version:            1.6.2
+Release:            1
 Summary:            Accounting and aggregation toolsuite for IPv4 and IPv6
 License:            GPLv2+
 Group:              Applications/Engineering
 URL:                http://www.pmacct.net/
-Source0:            http://www.pmacct.net/pmacct-%{version}.tar.gz
-Source1:            nfacctd.service
-Source2:            nfacctd
-Source3:            pmacctd.service
-Source4:            pmacctd
-Source5:            sfacctd.service
-Source6:            sfacctd
-Source7:            uacctd.service
-Source8:            uacctd
+Source0:            pmacct-%{version}.tar.gz
+Source1:            nfacctd.sysvinit
+Source3:            pmacctd.sysvinit
+Source5:            sfacctd.sysvinit
 
 Patch1:             pmacct-fix-implicit-pointer-decl.diff
 
 BuildRequires:      gcc
 BuildRequires:      make
-BuildRequires:      mariadb-devel
 BuildRequires:      libpcap-devel
-BuildRequires:      libstdc++-static
 BuildRequires:      pkgconfig
-BuildRequires:      postgresql-devel
 BuildRequires:      sqlite-devel >= 3.0.0
 BuildRequires:      pkgconfig(geoip)
 BuildRequires:      pkgconfig(jansson)
-BuildRequires:      systemd
-BuildRequires:      librabbitmq
-BuildRequires:      librabbitmq-devel
-
-Requires(post):     systemd
-Requires(preun):    systemd
-Requires(postun):   systemd
-
 
 %description
 pmacct is a small set of passive network monitoring tools to measure, account,
@@ -63,17 +47,11 @@ export CFLAGS="%{optflags} -Wno-return-type"
     --sbindir=%{_sbindir} \
     --enable-l2 \
     --enable-ipv6 \
-    --enable-v4-mapped \
-    --enable-mysql \
-    --enable-pgsql \
     --enable-sqlite3 \
     --enable-geoip \
     --enable-jansson \
     --enable-64bit \
-    --enable-threads \
-    --enable-ulog \
-    --enable-rabbitmq
-
+    --enable-threads
 
 make %{?_smp_mflags}
 
@@ -85,56 +63,55 @@ install -Dp examples/nfacctd-sql_v2.conf.example %{buildroot}/%{_sysconfdir}/%{n
 install -Dp examples/pmacctd-sql_v2.conf.example %{buildroot}/%{_sysconfdir}/%{name}/pmacctd.conf
 
 # install systemd units
-install -d %{buildroot}/%{_unitdir} %{buildroot}/%{_sysconfdir}/sysconfig/%{name}
-install %{SOURCE1} %{SOURCE3} %{SOURCE5} %{SOURCE7} %{buildroot}/%{_unitdir}
-install %{SOURCE2} %{SOURCE4} %{SOURCE6} %{SOURCE8} %{buildroot}/%{_sysconfdir}/sysconfig/%{name}
+install -d %{buildroot}/%{_initddir}
+install -m 0755 %{SOURCE1} %{buildroot}/%{_initddir}/nfacctd
+install -m 0755 %{SOURCE3} %{buildroot}/%{_initddir}/pmacctd
+install -m 0755 %{SOURCE5} %{buildroot}/%{_initddir}/sfacctd
 
 %post
-%systemd_post nfacctd.service
-%systemd_post pmacctd.service
-%systemd_post sfacctd.service
-%systemd_post uacctd.service
+chkconfig --add pmacctd
+chkconfig --add nfacctd
+chkconfig --add sfacctd
 
 %preun
-%systemd_preun nfacctd.service
-%systemd_preun pmacctd.service
-%systemd_preun sfacctd.service
-%systemd_preun uacctd.service
-
-%postun
-%systemd_postun_with_restart nfacctd.service
-%systemd_postun_with_restart pmacctd.service
-%systemd_postun_with_restart sfacctd.service
-%systemd_postun_with_restart uacctd.service
+if [ $1 -eq 0 ] ; then
+    /sbin/service pmacctd stop >/dev/null 2>&1
+    /sbin/service nfacctd stop >/dev/null 2>&1
+    /sbin/service sfacctd stop >/dev/null 2>&1
+    /sbin/chkconfig --del pmacctd
+    /sbin/chkconfig --del nfacctd
+    /sbin/chkconfig --del sfacctd
+fi
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS ChangeLog CONFIG-KEYS COPYING FAQS KNOWN-BUGS NEWS README TODO TOOLS UPGRADE
+%doc AUTHORS ChangeLog CONFIG-KEYS COPYING FAQS TOOLS UPGRADE
 %doc docs examples sql
 %{_bindir}/pmacct
-%{_bindir}/pmmyplay
-%{_bindir}/pmpgplay
 #
 %{_sbindir}/nfacctd
 %{_sbindir}/pmacctd
 %{_sbindir}/sfacctd
-%{_sbindir}/uacctd
+%{_sbindir}/pmbgpd
+%{_sbindir}/pmbmpd
+%{_sbindir}/pmtelemetryd
 #
-%{_unitdir}/nfacctd.service
-%{_unitdir}/pmacctd.service
-%{_unitdir}/sfacctd.service
-%{_unitdir}/uacctd.service
+%attr(755,root,root) %{_initddir}/pmacctd
+%attr(755,root,root) %{_initddir}/nfacctd
+%attr(755,root,root) %{_initddir}/sfacctd
 #
 %{_sysconfdir}/sysconfig/%{name}/nfacctd
 %{_sysconfdir}/sysconfig/%{name}/pmacctd
 %{_sysconfdir}/sysconfig/%{name}/sfacctd
-%{_sysconfdir}/sysconfig/%{name}/uacctd
 #
 %dir %{_sysconfdir}/pmacct
 %attr(600,root,root) %config(noreplace) %{_sysconfdir}/pmacct/nfacctd.conf
 %attr(600,root,root) %config(noreplace) %{_sysconfdir}/pmacct/pmacctd.conf
 
 %changelog
+* Fri May 05 2017 Quest <quest@lysator.liu.se> - 1.6.2-1
+- EPEL 6 version
+
 * Wed Jan 13 2016 Betsy Alpert <ealpert@iix.net> - 1.5.2-3
 - Added build support for AMQP/RabbitMQ
 
