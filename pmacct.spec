@@ -9,8 +9,11 @@ Group:              Applications/Engineering
 URL:                http://www.pmacct.net/
 Source0:            pmacct-%{version}.tar.gz
 Source1:            nfacctd.sysvinit
+Source2:            nfacctd.sysconfig
 Source3:            pmacctd.sysvinit
+Source4:            pmacctd.sysconfig
 Source5:            sfacctd.sysvinit
+Source6:            sfacctd.sysconfig
 
 Patch1:             pmacct-fix-implicit-pointer-decl.diff
 
@@ -64,9 +67,14 @@ install -Dp examples/pmacctd-sql_v2.conf.example %{buildroot}/%{_sysconfdir}/%{n
 
 # install systemd units
 install -d %{buildroot}/%{_initddir}
-install -m 0755 %{SOURCE1} %{buildroot}/%{_initddir}/nfacctd
-install -m 0755 %{SOURCE3} %{buildroot}/%{_initddir}/pmacctd
-install -m 0755 %{SOURCE5} %{buildroot}/%{_initddir}/sfacctd
+install %{SOURCE1} %{buildroot}/%{_initddir}/nfacctd
+install %{SOURCE3} %{buildroot}/%{_initddir}/pmacctd
+install %{SOURCE5} %{buildroot}/%{_initddir}/sfacctd
+#
+install -d %{buildroot}/%{_sysconfdir}/sysconfig/%{name}
+install %{SOURCE2} %{buildroot}/%{_sysconfdir}/sysconfig/%{name}/nfacctd
+install %{SOURCE4} %{buildroot}/%{_sysconfdir}/sysconfig/%{name}/pmacctd
+install %{SOURCE6} %{buildroot}/%{_sysconfdir}/sysconfig/%{name}/sfacctd
 
 %post
 chkconfig --add pmacctd
@@ -100,9 +108,9 @@ fi
 %attr(755,root,root) %{_initddir}/nfacctd
 %attr(755,root,root) %{_initddir}/sfacctd
 #
-%{_sysconfdir}/sysconfig/%{name}/nfacctd
-%{_sysconfdir}/sysconfig/%{name}/pmacctd
-%{_sysconfdir}/sysconfig/%{name}/sfacctd
+%attr(755,root,root) %{_sysconfdir}/sysconfig/%{name}/nfacctd
+%attr(755,root,root) %{_sysconfdir}/sysconfig/%{name}/pmacctd
+%attr(755,root,root) %{_sysconfdir}/sysconfig/%{name}/sfacctd
 #
 %dir %{_sysconfdir}/pmacct
 %attr(600,root,root) %config(noreplace) %{_sysconfdir}/pmacct/nfacctd.conf

@@ -19,9 +19,10 @@
 
 exec="/usr/sbin/pmacctd"
 prog="pmacctd"
-status_prog="starter"
 config="/etc/pmacct/pmacctd.conf"
 pidfile=/var/run/pmacctd.pid
+
+. /etc/sysconfig/pmacct/pmacctd
 
 lockfile=/var/lock/subsys/$prog
 
@@ -29,7 +30,7 @@ start() {
     [ -x $exec ] || exit 5
     [ -f $config ] || exit 6
     echo -n $"Starting $prog: "
-    daemon --pidfile=$pidfile $exec -f $config -D -F $pidfile
+    daemon --pidfile=$pidfile $exec -f $config -D -F $pidfile $OPTIONS
     retval=$?
     echo
     [ $retval -eq 0 ] && touch $lockfile
